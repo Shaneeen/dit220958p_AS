@@ -1,0 +1,56 @@
+﻿@page
+@model dit220958p_AS.Pages.Account.LoginModel
+@{
+    ViewData["Title"] = "Login";
+}
+
+<h2>Login</h2>
+
+<form method="post">
+    @Html.AntiForgeryToken()
+    <!-- Email -->
+    <div>
+        <label>Email:</label>
+        <input asp-for="Input.Email" class="form-control" required />
+        <span asp-validation-for="Input.Email" class="text-danger"></span>
+    </div>
+
+    <!-- Password -->
+    <div>
+        <label>Password:</label>
+        <input asp-for="Input.Password" type="password" class="form-control" required />
+        <span asp-validation-for="Input.Password" class="text-danger"></span>
+    </div>
+
+    <!-- Remember Me -->
+    <div>
+        <label>
+            <input asp-for="Input.RememberMe" /> Remember Me
+        </label>
+    </div>
+
+    <!-- reCAPTCHA Token -->
+    <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response" />
+
+    <!-- Submit Button -->
+    <button type="submit" class="btn btn-primary mt-3">Login</button>
+
+    <!-- General Error Message -->
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="text-danger mt-2">@Model.ErrorMessage</div>
+    }
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <partial name="_ValidationScriptsPartial" />
+    <script src="https://www.google.com/recaptcha/api.js?render=6LcSDtUqAAAAALKxaQDN9HqdI3Yc9vv8r2kbKDoL"></script>
+    <script>
+        grecaptcha.ready(function() {
+            grecaptcha.execute('6LcSDtUqAAAAALKxaQDN9HqdI3Yc9vv8r2kbKDoL', { action: 'login' }).then(function(token) {
+                document.getElementById('g-recaptcha-response').value = token;
+            });
+        });
+    </script>
+}

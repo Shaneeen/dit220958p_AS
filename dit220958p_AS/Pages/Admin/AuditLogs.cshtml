@@ -1,0 +1,32 @@
+﻿@page
+@model dit220958p_AS.Pages.Admin.AuditLogsModel
+@{
+    ViewData["Title"] = "Audit Logs";
+}
+
+<h2>Audit Logs</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>User Email</th>
+            <th>Action</th>
+            <th>Details</th>
+            <th>IP Address</th>
+            <th>Timestamp</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var log in Model.AuditLogs)
+        {
+            <tr>
+                <td>@log.UserEmail</td>
+                <td>@log.Action</td>
+                <td>@log.Details</td>
+                <td>@log.IPAddress</td>
+                <td>@log.Timestamp.ToLocalTime()</td>
+            </tr>
+        }
+    </tbody>
+</table>
+

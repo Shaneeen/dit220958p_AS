@@ -1,0 +1,50 @@
+﻿@page
+@model dit220958p_AS.Pages.HomeModel
+@{
+    ViewData["Title"] = "Home";
+}
+
+<h2>Welcome, @Model.MemberDetails.FirstName @Model.MemberDetails.LastName!</h2>
+
+<div>
+    <p><strong>First Name:</strong> @Model.MemberDetails.FirstName</p>
+    <p><strong>Last Name:</strong> @Model.MemberDetails.LastName</p>
+    <p><strong>Gender:</strong> @Model.MemberDetails.Gender</p>
+    <p><strong>NRIC:</strong> @Model.MemberDetails.NRIC</p>
+    <p><strong>Email Address:</strong> @Model.MemberDetails.Email</p>
+    <p><strong>Date of Birth:</strong> @Model.MemberDetails.DateOfBirth.ToShortDateString()</p>
+    <p><strong>Who Am I:</strong> @Model.MemberDetails.WhoAmI</p>
+
+    @if (!string.IsNullOrEmpty(Model.MemberDetails.ResumePath))
+    {
+        <h4>Resume: @Model.MemberDetails.ResumeName</h4>
+        <iframe src="@Url.Content(Model.MemberDetails.ResumePath)" width="100%" height="600px"></iframe>
+    }
+    else
+    {
+        <p><strong>Resume:</strong> No resume uploaded.</p>
+    }
+</div>
+
+<form method="post" asp-page-handler="Logout">
+    <button type="submit" class="btn btn-danger">Logout</button>
+</form>
+
+<!-- Inactivity Timeout Script -->
+<script>
+    var timeout = 1 * 60 * 1000;  // 1 minute timeout
+
+    var resetTimer = function() {
+        clearTimeout(window.sessionTimeout);
+        window.sessionTimeout = setTimeout(handleSessionTimeout, timeout);
+    };
+
+    var handleSessionTimeout = function() {
+        alert("Your session has expired. You will be redirected to the login page.");
+        window.location.href = "/Account/Login";
+    };
+
+    window.onload = resetTimer;
+    document.onmousemove = resetTimer;
+    document.onkeypress = resetTimer;
+</script>

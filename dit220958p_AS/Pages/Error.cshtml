@@ -1,0 +1,10 @@
+﻿@page
+@model ErrorModel
+@{
+    ViewData["Title"] = "Error";
+}
+
+<h1>@Model.ErrorTitle</h1>
+<p>@Model.ErrorMessage</p>
+
+<a asp-page="/Index">Return to Home</a>
