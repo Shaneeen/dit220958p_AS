@@ -117,6 +117,19 @@ namespace dit220958p_AS.Pages.Account
                         return Page();
                     }
 
+                    // After successful user creation, store password in PasswordHistory table
+                    var passwordHistory = new PasswordHistory
+                    {
+                        UserId = user.Id,                  // Link to IdentityUser
+                        PasswordHash = user.PasswordHash,  // Store hashed password
+                        ChangedDate = DateTime.UtcNow      // Timestamp of creation
+                    };
+
+                    _context.PasswordHistories.Add(passwordHistory);
+                    await _context.SaveChangesAsync();  // Save PasswordHistory before creating Member
+
+
+
                     // Now, create the Member with the hashed password from IdentityUser
                     var member = new Member
                     {

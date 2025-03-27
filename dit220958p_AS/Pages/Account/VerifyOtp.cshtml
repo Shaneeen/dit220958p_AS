@@ -1,0 +1,44 @@
+﻿@page
+@model dit220958p_AS.Pages.Account.VerifyOtpModel
+@{
+    ViewData["Title"] = "Verify OTP";
+}
+
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 90vh;">
+    <div class="p-4" style="max-width: 500px; width: 100%;">
+        <h2 class="text-center fw-bold mb-3" style="color: #173F35;">Verify OTP</h2>
+        <p class="text-center" style="color: #173F35;">
+            We have sent a One-Time Password (OTP) to your email. Please enter it below.
+        </p>
+
+        <form method="post" class="needs-validation" novalidate>
+            @Html.AntiForgeryToken()
+
+            <!-- Hidden Fields -->
+            <input type="hidden" asp-for="Email" />
+            <input type="hidden" name="reset" value="@Model.IsPasswordReset.ToString().ToLower()" />
+
+            <!-- OTP Code -->
+            <div class="mb-3">
+                <label class="form-label fw-bold" style="color: #173F35;">* OTP Code</label>
+                <input asp-for="OtpCode" class="form-control rounded-3 text-center" required maxlength="6" />
+                <span asp-validation-for="OtpCode" class="text-danger"></span>
+            </div>
+
+            <!-- Verify Button -->
+            <button type="submit" class="btn btn-dark w-100 rounded-pill py-2" style="background-color: #173F35; border: none;">
+                Verify
+            </button>
+
+            <!-- Error Message -->
+            @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+            {
+                <div class="text-danger text-center mt-2">@Model.ErrorMessage</div>
+            }
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -12,7 +12,9 @@ namespace dit220958p_AS.Data
         }
 
         public DbSet<Member> Members { get; set; }
-        public DbSet<AuditLog> AuditLogs { get; set; }  
+        public DbSet<AuditLog> AuditLogs { get; set; }
+        public DbSet<PasswordHistory> PasswordHistories { get; set; }
+
 
     }
 }

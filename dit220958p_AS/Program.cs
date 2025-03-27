@@ -1,11 +1,14 @@
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using dit220958p_AS.Data;
 using dit220958p_AS.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
+using System.IO.Compression;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddSingleton(new BackupService(builder.Configuration.GetConnectionString("DefaultConnection")));
+
 
 builder.Services.AddRazorPages()
     .AddRazorRuntimeCompilation()  // Enable runtime compilation if needed
@@ -29,7 +32,7 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options =>
     options.Password.RequiredLength = 12;  // Enforce strong passwords
 
     // Lockout settings
-    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);  // Lockout duration
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(1);  // Lockout duration
     options.Lockout.MaxFailedAccessAttempts = 3;  // Lock account after 3 failed attempts
     options.Lockout.AllowedForNewUsers = true;  // Apply lockout for new users
 })
@@ -37,6 +40,15 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options =>
 
 // Add EncryptionHelper before building the app
 builder.Services.AddSingleton<EncryptionHelper>();
+// Add email service
+builder.Services.AddSingleton<EmailService>();
+
+builder.Services.AddSingleton<GoogleDriveService>();  // ✅ Register GoogleDriveService
+
+builder.Services.AddMemoryCache();
+
+builder.Services.AddHttpContextAccessor();
+
 
 // Add session services
 builder.Services.AddSession(options =>
@@ -55,13 +67,13 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 builder.Services.AddScoped<ReCaptchaService>();  // Register reCAPTCHA service
 
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
+
 builder.Services.AddHttpContextAccessor();  // Enable HTTP context access
 builder.Services.AddScoped<AuditLogService>();  // Register AuditLogService
 
-
 var app = builder.Build();
-
-
 
 if (!app.Environment.IsDevelopment())
 {
@@ -74,7 +86,6 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
@@ -85,6 +96,8 @@ app.UseAuthentication();  // Enable authentication
 app.UseAuthorization();
 
 app.UseSession();  // Enable session after authentication
+
+app.UseMiddleware<PageVisitLoggingMiddleware>();
 
 app.UseEndpoints(endpoints =>
 {
@@ -112,5 +125,37 @@ app.UseEndpoints(endpoints =>
     });
 });
 
+app.Lifetime.ApplicationStopping.Register(() =>
+{
+    Console.WriteLine("🔴 Application is stopping... Running backup before exit.");
 
-app.Run();
+    try
+    {
+        var backupService = app.Services.GetRequiredService<BackupService>();
+
+        Task.Run(async () =>
+        {
+            string backupFilePath = await backupService.BackupDatabaseAsync(); // ✅ Now correctly returns a string
+
+            if (!string.IsNullOrEmpty(backupFilePath))
+            {
+                Console.WriteLine($"📁 Backup file created: {backupFilePath}");
+
+                var googleDriveService = app.Services.GetRequiredService<GoogleDriveService>();
+                await googleDriveService.UploadFile(backupFilePath); // ✅ Upload the file to Google Drive
+
+                Console.WriteLine("✅ Backup successfully uploaded to Google Drive!");
+            }
+            else
+            {
+                Console.WriteLine("❌ Backup failed. No file to upload.");
+            }
+        }).Wait();  // 🔥 Forces execution before shutdown
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"🔥 ERROR during shutdown backup: {ex.Message}");
+    }
+});
+
+ app.Run();

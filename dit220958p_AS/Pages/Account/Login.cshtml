@@ -4,46 +4,68 @@
     ViewData["Title"] = "Login";
 }
 
-<h2>Login</h2>
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+    <div class="p-4" style="max-width: 500px; width: 100%;">
+        <h2 class="text-center fw-bold mb-4" style="color: #173F35;">Login</h2>
 
-<form method="post">
-    @Html.AntiForgeryToken()
-    <!-- Email -->
-    <div>
-        <label>Email:</label>
-        <input asp-for="Input.Email" class="form-control" required />
-        <span asp-validation-for="Input.Email" class="text-danger"></span>
+        <form method="post" class="needs-validation" novalidate>
+            @Html.AntiForgeryToken()
+
+            <!-- Email -->
+            <div class="mb-3">
+                <label class="form-label fw-bold" style="color: #173F35;">* Email</label>
+                <input asp-for="Input.Email" type="email" class="form-control rounded-3" required>
+                <span asp-validation-for="Input.Email" class="text-danger"></span>
+            </div>
+
+            <!-- Password -->
+            <div class="mb-3">
+                <label class="form-label fw-bold" style="color: #173F35;">* Password</label>
+                <input asp-for="Input.Password" type="password" class="form-control rounded-3" required>
+                <span asp-validation-for="Input.Password" class="text-danger"></span>
+            </div>
+
+            <!-- reCAPTCHA Token -->
+            <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response" />
+
+            <!-- Sign In Button & Forgot Password -->
+            <div class="d-flex justify-content-between">
+                <button type="submit" class="btn btn-dark fw-bold rounded-pill px-4 py-2 w-50" style="background-color: #173F35; border: none;">
+                    Sign In
+                </button>
+                <a asp-page="/Account/ForgotPassword" class="text-decoration-none fw-bold text-center w-50" style="color: #173F35; text-decoration: underline;">
+                    Forgot your password?
+                </a>
+            </div>
+
+
+
+
+            <!-- General Error Message -->
+            @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+            {
+                <div class="text-danger text-center mt-2">@Model.ErrorMessage</div>
+            }
+
+            <!-- Divider -->
+            <div class="d-flex align-items-center my-4">
+                <hr class="flex-grow-1 border-dark">
+                <span class="mx-2 fw-bold" style="color: #173F35;">OR</span>
+                <hr class="flex-grow-1 border-dark">
+            </div>
+
+            <!-- Create an Account -->
+            <div class="text-center">
+                <p class="fw-bold" style="color: #173F35;">Need an account?</p>
+                <a asp-page="/Account/Register" class="btn border-dark fw-bold px-4 py-2 rounded-pill">
+                    Create an Account
+                </a>
+            </div>
+        </form>
     </div>
-
-    <!-- Password -->
-    <div>
-        <label>Password:</label>
-        <input asp-for="Input.Password" type="password" class="form-control" required />
-        <span asp-validation-for="Input.Password" class="text-danger"></span>
-    </div>
-
-    <!-- Remember Me -->
-    <div>
-        <label>
-            <input asp-for="Input.RememberMe" /> Remember Me
-        </label>
-    </div>
-
-    <!-- reCAPTCHA Token -->
-    <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response" />
-
-    <!-- Submit Button -->
-    <button type="submit" class="btn btn-primary mt-3">Login</button>
-
-    <!-- General Error Message -->
-    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
-    {
-        <div class="text-danger mt-2">@Model.ErrorMessage</div>
-    }
-</form>
+</div>
 
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
     <partial name="_ValidationScriptsPartial" />
     <script src="https://www.google.com/recaptcha/api.js?render=6LcSDtUqAAAAALKxaQDN9HqdI3Yc9vv8r2kbKDoL"></script>
     <script>

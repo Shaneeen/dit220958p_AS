@@ -4,104 +4,117 @@
     ViewData["Title"] = "Register";
 }
 
-<h2>Register</h2>
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 90vh;">
+    <div class="p-4" style="max-width: 600px; width: 100%;">
+        <h2 class="text-center fw-bold mb-3" style="color: #173F35;">Create an Account</h2>
+        <p class="text-center" style="color: #173F35;">
+            Create an account to access your account details, order history, subscriptions, and more.
+        </p>
 
-<form method="post" enctype="multipart/form-data">
-    @Html.AntiForgeryToken()
-    <!-- First Name -->
-    <div>
-        <label>First Name:</label>
-        <input asp-for="Input.FirstName" class="form-control" required />
-        <span asp-validation-for="Input.FirstName" class="text-danger"></span>
+        <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+            @Html.AntiForgeryToken()
+
+            <!-- First Name & Last Name -->
+            <div class="row mb-3">
+                <div class="col">
+                    <label class="form-label fw-bold" style="color: #173F35;">* First Name</label>
+                    <input asp-for="Input.FirstName" class="form-control rounded-3" required />
+                    <span asp-validation-for="Input.FirstName" class="text-danger"></span>
+                </div>
+                <div class="col">
+                    <label class="form-label fw-bold" style="color: #173F35;">* Last Name</label>
+                    <input asp-for="Input.LastName" class="form-control rounded-3" required />
+                    <span asp-validation-for="Input.LastName" class="text-danger"></span>
+                </div>
+            </div>
+
+            <!-- Email with real-time validation -->
+            <div class="mb-3">
+                <label class="form-label fw-bold" style="color: #173F35;">* Email</label>
+                <input asp-for="Input.Email" class="form-control rounded-3" id="Input_Email" required />
+                <span asp-validation-for="Input.Email" class="text-danger"></span>
+                <span id="email-error" class="text-danger"></span>
+            </div>
+
+            <!-- Password with strength checker -->
+            <div class="mb-3">
+                <label class="form-label fw-bold" style="color: #173F35;">* Password</label>
+                <input asp-for="Input.Password" type="password" class="form-control rounded-3" id="password" required oninput="checkPasswordStrength()" />
+
+                <!-- Strength Indicator Bars -->
+                <div id="password-strength" style="height: 10px; display: flex; margin-top: 5px;">
+                    <div class="strength-bar" style="flex: 1; height: 100%; background-color: lightgray; margin-right: 2px;"></div>
+                    <div class="strength-bar" style="flex: 1; height: 100%; background-color: lightgray; margin-right: 2px;"></div>
+                    <div class="strength-bar" style="flex: 1; height: 100%; background-color: lightgray; margin-right: 2px;"></div>
+                    <div class="strength-bar" style="flex: 1; height: 100%; background-color: lightgray;"></div>
+                </div>
+
+                <!-- Strength Text Feedback -->
+                <small id="password-strength-text" class="form-text text-muted"></small>
+                <span asp-validation-for="Input.Password" class="text-danger"></span>
+            </div>
+
+            <!-- Confirm Password -->
+            <div class="mb-3">
+                <label class="form-label fw-bold" style="color: #173F35;">* Confirm Password</label>
+                <input asp-for="Input.ConfirmPassword" type="password" class="form-control rounded-3" required />
+                <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+            </div>
+
+            <!-- Gender & Date of Birth -->
+            <div class="row mb-3">
+                <div class="col">
+                    <label class="form-label fw-bold" style="color: #173F35;">* Gender</label>
+                    <select asp-for="Input.Gender" class="form-control rounded-3" required>
+                        <option value="">Select Gender</option>
+                        <option>Male</option>
+                        <option>Female</option>
+                        <option>Other</option>
+                    </select>
+                    <span asp-validation-for="Input.Gender" class="text-danger"></span>
+                </div>
+                <div class="col">
+                    <label class="form-label fw-bold" style="color: #173F35;">* Date of Birth</label>
+                    <input asp-for="Input.DateOfBirth" type="date" class="form-control rounded-3" required />
+                    <span asp-validation-for="Input.DateOfBirth" class="text-danger"></span>
+                </div>
+            </div>
+
+            <!-- NRIC -->
+            <div class="mb-3">
+                <label class="form-label fw-bold" style="color: #173F35;">* NRIC</label>
+                <input asp-for="Input.NRIC" class="form-control rounded-3" required />
+                <span asp-validation-for="Input.NRIC" class="text-danger"></span>
+            </div>
+
+            <!-- Who Am I -->
+            <div class="mb-3">
+                <label class="form-label fw-bold" style="color: #173F35;">Who Am I</label>
+                <textarea asp-for="Input.WhoAmI" class="form-control rounded-3"></textarea>
+                <span asp-validation-for="Input.WhoAmI" class="text-danger"></span>
+            </div>
+
+            <!-- Resume Upload -->
+            <div class="mb-3">
+                <label class="form-label fw-bold" style="color: #173F35;">Upload Resume (PDF/DOCX only)</label>
+                <input asp-for="Input.Resume" type="file" class="form-control rounded-3" id="Input_Resume" accept=".pdf,.docx" required />
+                <span asp-validation-for="Input.Resume" class="text-danger"></span>
+                <span id="file-error" class="text-danger"></span>
+            </div>
+
+            <!-- Register Button -->
+            <button type="submit" class="btn btn-dark w-100 rounded-pill py-2" style="background-color: #173F35; border: none;">
+                Create Your Account
+            </button>
+
+            <!-- General Error Message -->
+            @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+            {
+                <div class="text-danger text-center mt-2">@Model.ErrorMessage</div>
+            }
+        </form>
     </div>
-
-    <!-- Last Name -->
-    <div>
-        <label>Last Name:</label>
-        <input asp-for="Input.LastName" class="form-control" required />
-        <span asp-validation-for="Input.LastName" class="text-danger"></span>
-    </div>
-
-    <!-- Gender -->
-    <div>
-        <label>Gender:</label>
-        <select asp-for="Input.Gender" class="form-control" required>
-            <option value="">Select Gender</option>
-            <option>Male</option>
-            <option>Female</option>
-            <option>Other</option>
-        </select>
-        <span asp-validation-for="Input.Gender" class="text-danger"></span>
-    </div>
-
-    <!-- NRIC -->
-    <div>
-        <label>NRIC:</label>
-        <input asp-for="Input.NRIC" class="form-control" required />
-        <span asp-validation-for="Input.NRIC" class="text-danger"></span>
-    </div>
-
-    <!-- Email with real-time duplication check -->
-    <div>
-        <label>Email:</label>
-        <input asp-for="Input.Email" class="form-control" id="Input_Email" required />
-        <span asp-validation-for="Input.Email" class="text-danger"></span>
-        <span id="email-error" class="text-danger"></span>
-    </div>
-
-    <!-- Password with strength checker -->
-    <div>
-        <label>Password:</label>
-        <input asp-for="Input.Password" type="password" class="form-control" id="password" required oninput="checkPasswordStrength()" />
-        <div id="password-strength" style="height: 10px; display: flex; margin-top: 5px;">
-            <div style="flex: 1; margin-right: 2px; height: 100%; background-color: lightgray;" class="strength-bar"></div>
-            <div style="flex: 1; margin-right: 2px; height: 100%; background-color: lightgray;" class="strength-bar"></div>
-            <div style="flex: 1; margin-right: 2px; height: 100%; background-color: lightgray;" class="strength-bar"></div>
-            <div style="flex: 1; margin-right: 2px; height: 100%; background-color: lightgray;" class="strength-bar"></div>
-        </div>
-        <small id="password-strength-text" class="form-text text-muted"></small>
-        <span asp-validation-for="Input.Password" class="text-danger"></span>
-    </div>
-
-    <!-- Confirm Password -->
-    <div>
-        <label>Confirm Password:</label>
-        <input asp-for="Input.ConfirmPassword" type="password" class="form-control" required />
-        <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
-    </div>
-
-    <!-- Date of Birth -->
-    <div>
-        <label>Date of Birth:</label>
-        <input asp-for="Input.DateOfBirth" type="date" class="form-control" required />
-        <span asp-validation-for="Input.DateOfBirth" class="text-danger"></span>
-    </div>
-
-    <!-- Who Am I -->
-    <div>
-        <label>Who Am I:</label>
-        <textarea asp-for="Input.WhoAmI" class="form-control"></textarea>
-        <span asp-validation-for="Input.WhoAmI" class="text-danger"></span>
-    </div>
-
-    <!-- Resume Upload with file type validation -->
-    <div>
-        <label>Upload Resume (PDF/DOCX only):</label>
-        <input asp-for="Input.Resume" type="file" class="form-control" id="Input_Resume" accept=".pdf,.docx" required />
-        <span asp-validation-for="Input.Resume" class="text-danger"></span>
-        <span id="file-error" class="text-danger"></span>
-    </div>
-
-    <!-- Submit Button -->
-    <button type="submit" class="btn btn-primary mt-3">Register</button>
-
-    <!-- General Error Message -->
-    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
-    {
-        <div class="text-danger mt-2">@Model.ErrorMessage</div>
-    }
-</form>
-
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using dit220958p_AS.Services;
 using dit220958p_AS.Data;
+
 using System.Threading.Tasks;
 using dit220958p_AS.Models;
 
@@ -11,7 +12,9 @@ namespace dit220958p_AS.Pages
     {
         private readonly EncryptionHelper _encryptionHelper;
 
-        private readonly AuditLogService _auditLogService;  
+        private readonly AuditLogService _auditLogService;
+
+        private readonly int _maxPasswordAgeDays = 1;  // Define maximum password ag
         public string UserEmail { get; set; }
         public string SessionId { get; set; }
         public Member MemberDetails { get; set; }
@@ -39,6 +42,24 @@ namespace dit220958p_AS.Pages
             {
                 // Decrypt the NRIC before displaying
                 MemberDetails.NRIC = _encryptionHelper.Decrypt(MemberDetails.NRIC, MemberDetails.NRIC_IV);
+
+                // Fetch the most recent password change for the user
+                var user = _context.Users.FirstOrDefault(u => u.Email == UserEmail);
+                var latestPasswordHistory = _context.PasswordHistories
+                    .Where(ph => ph.UserId == user.Id)
+                    .OrderByDescending(ph => ph.ChangedDate)
+                    .FirstOrDefault();
+
+                if (latestPasswordHistory != null)
+                {
+                    var passwordAgeDays = (DateTime.UtcNow - latestPasswordHistory.ChangedDate).TotalDays;
+
+                    // Enforce maximum password age (redirect to change password page if expired)
+                    if (passwordAgeDays > _maxPasswordAgeDays)
+                    {
+                        return RedirectToPage("/Account/ChangePassword");
+                    }
+                }
             }
 
             return Page();
@@ -51,6 +72,7 @@ namespace dit220958p_AS.Pages
             HttpContext.Session.Clear();
             return RedirectToPage("/Account/Login");
         }
+
 
 
     }

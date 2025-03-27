@@ -1,22 +1,54 @@
-html {
-  font-size: 14px;
-}
-
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
-}
-
+/* Set background color for the entire page */
 body {
-  margin-bottom: 60px;
+    background-color: #fdfcf2;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
 }
+
+/* Navbar Styling */
+.custom-navbar {
+    background-color: #deecda;
+    padding: 10px; /* Increased padding for better spacing */
+    border-radius: 20px; /* Rounded edges */
+    margin: 20px auto; /* Increased margin at the top for more space */
+    width: 97%;
+}
+
+    /* Navbar and Footer Text */
+    .custom-navbar .navbar-brand,
+    .custom-navbar .nav-link,
+    .custom-footer {
+        color: #173F35 !important; /* Dark green text inside navbar and footer */
+    }
+
+        .custom-navbar .nav-link:hover {
+            color: #0F2A22 !important; /* Slightly darker hover effect */
+        }
+
+/* Content should take up remaining space */
+.content {
+    flex: 1;
+    color: #8FBC8F; /* Darkseagreen for general text */
+}
+
+/* Sticky Footer */
+.custom-footer {
+    background-color: #deecda;
+    padding: 15px 0;
+    text-align: center;
+    border-radius: 0px;
+    width: 100%;
+    margin: auto;
+}
+
+    /* Footer Links */
+    .custom-footer a {
+        color: #173F35 !important; /* Dark green for links inside footer */
+        text-decoration: none;
+    }
+
+        .custom-footer a:hover {
+            text-decoration: underline;
+        }
